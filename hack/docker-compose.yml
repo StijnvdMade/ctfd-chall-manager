@@ -30,9 +30,18 @@ services:
       SWAGGER: true
       KUBECONFIG: /tmp/config
       OCI_INSECURE: true
+      PULUMI_SKIP_UPDATE_CHECK: "1"
+      PULUMI_AUTOMATION_API_SKIP_VERSION_CHECK: "1"
+      PULUMI_SKIP_CONFIRMATIONS: "true"
+      # Fix voor Docker Desktop op Windows/WSL
+      DOCKER_HOST: unix:///var/run/docker.sock
+      # Workaround voor WSL proc parsing issue
+      PULUMI_ENABLE_LEGACY_PLUGIN_SEARCH: "1"
     volumes:
       - ~/.kube/config:/tmp/config:ro
       - /var/run/docker.sock:/var/run/docker.sock
+      # Persistent storage voor chall-manager data
+      - chall-manager-data:/tmp/chall-manager
     networks:
       - testing
 
@@ -70,3 +79,6 @@ services:
 networks:
   testing:
     driver: bridge
+
+volumes:
+  chall-manager-data:

@@ -1,0 +1,88 @@
+╔═══════════════════════════════════════════════════════════════╗
+║                 CHALL-MANAGER QUICK FIX                       ║
+╚═══════════════════════════════════════════════════════════════╝
+
+🔴 PROBLEEM: "Internal server error" bij challenge maken
+
+📋 OPLOSSING:
+
+   In CTFd, bij het aanmaken van een challenge:
+
+   ❌ FOUT:
+   └─ Scenario: localhost:5000/examples/docker:latest
+
+   ✅ CORRECT:
+   └─ Scenario: registry:5000/examples/docker:latest
+
+
+🤔 WAAROM?
+
+   • localhost:5000 = werkt alleen op je host machine
+   • registry:5000  = werkt binnen Docker network
+   
+   De chall-manager container draait BINNEN Docker en moet
+   de registry bereiken via het Docker netwerk, niet via
+   localhost van je host machine.
+
+
+📝 STAPPEN OM CHALLENGE TE MAKEN:
+
+   1. Ga naar http://localhost:8000
+   2. Login: ctfer / ctfer
+   3. Admin Panel → Plugins → Chall-Manager
+   4. Create Challenge
+   5. Vul in:
+      - Name: Test Challenge
+      - Category: Web
+      - Points: 100
+      - Scenario: registry:5000/examples/docker:latest ⚠️
+      - Mana Cost: 1
+   6. Create
+   7. Ga naar Challenges en je ziet de nieuwe challenge
+
+
+🧪 TEST SEGMENTATIE:
+
+   1. Maak 2 teams aan (of gebruik Users mode)
+   2. Login als team 1 en boot de challenge
+   3. Login als team 2 en boot de challenge
+   4. Run in terminal:
+      
+      docker ps --filter 'name=challenge-'
+      
+   5. Je zou 2 containers moeten zien met verschillende IDs
+      Bijvoorbeeld:
+      - challenge-abc123
+      - challenge-def456
+
+
+🔧 NUTTIGE COMMANDO'S:
+
+   # Bekijk alle challenge containers
+   docker ps --filter 'name=challenge-'
+
+   # Live monitor
+   watch -n 2 'docker ps --filter name=challenge-'
+
+   # Chall-manager logs
+   docker logs -f chall-manager
+
+   # Restart alles
+   cd hack && docker compose down && docker compose up -d
+
+   # Verifieer registry
+   curl http://localhost:5000/v2/examples/docker/tags/list
+
+
+📚 SCENARIO URL REFERENTIE:
+
+   Voor lokale test:
+   └─ registry:5000/examples/docker:latest
+
+   Voor productie (met echte registry):
+   └─ your-registry.com/namespace/challenge:tag
+
+
+💡 TIP: Als je andere scenarios wilt toevoegen, kopieer
+         de docker-scenario folder en pas main.go aan!
+

@@ -6,7 +6,6 @@ toolchain go1.24.5
 
 require (
 	github.com/ctfer-io/chall-manager/sdk v0.5.0
-	github.com/pulumi/pulumi-command/sdk v1.1.0
 	github.com/pulumi/pulumi-docker/sdk/v4 v4.8.0
 	github.com/pulumi/pulumi/sdk/v3 v3.178.0
 )
